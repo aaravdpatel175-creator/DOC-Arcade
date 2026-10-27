@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#000814">
+<title>DOC SHOOTER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-device="">
+<canvas id="game"></canvas>
+<div id="bg"><div class="grid"></div><div class="vignette"></div></div>
+
+<!-- HUD -->
+<div id="hud" class="hidden">
+  <div class="hud-tl glass">
+    <div id="hMission" class="hm"></div>
+    <div id="hObj" class="ho"></div>
+    <div class="bar"><i id="hProg"></i></div>
+    <div id="hProgTxt" class="hp"></div>
+  </div>
+  <div class="hud-tc glass"><span id="hTimeLbl">TIME</span><b id="hTime">00:00</b></div>
+  <div class="hud-tr glass">
+    <div>SCORE <b id="hScore">0</b></div>
+    <div>BEST <b id="hHigh">0</b></div>
+    <div>COMBO <b id="hCombo">x1</b></div>
+  </div>
+  <div id="cross"><i></i></div>
+  <div id="hit"></div>
+  <div id="feed"></div>
+  <div id="toast"></div>
+  <div id="hint"></div>
+  <div class="hud-br glass">
+    <div id="hAmmo">12 / 12</div>
+    <div id="hAmmoSub"></div>
+    <div class="bar"><i id="hRel"></i></div>
+  </div>
+</div>
+
+<!-- Touch controls -->
+<div id="touch">
+  <div id="look"></div>
+  <div id="joy"><div id="knob"></div></div>
+  <button id="fire" aria-label="Fire">FIRE</button>
+  <button id="reloadBtn" aria-label="Reload">&#10227;</button>
+  <button id="pauseBtn" aria-label="Pause">&#10074;&#10074;</button>
+</div>
+
+<!-- Screens -->
+<div id="sDevice" class="screen show">
+  <div class="panel glass">
+    <h1 class="title">DOC<span>SHOOTER</span></h1>
+    <p class="sub">Select your device to begin</p>
+    <div class="row">
+      <button class="btn big" id="btnLaptop"><em>&#128187;</em>Laptop<small>Keyboard + Mouse</small></button>
+      <button class="btn big" id="btnPhone"><em>&#128241;</em>Phone<small>Touch Controls</small></button>
+    </div>
+    <p class="fine">Requires an internet connection on first load (Three.js CDN).</p>
+  </div>
+</div>
+
+<div id="sMain" class="screen">
+  <div class="panel glass">
+    <h1 class="title">DOC<span>SHOOTER</span></h1>
+    <p class="sub" id="mainSub">Neon Training Corps</p>
+    <div class="col">
+      <button class="btn" id="btnPlay">&#9654; Play Campaign</button>
+      <button class="btn" id="btnSettings">&#9881; Settings</button>
+      <button class="btn" id="btnControls">&#127918; Controls</button>
+      <button class="btn warn" id="btnReset">&#8635; Restart Campaign</button>
+      <button class="btn ghost" id="btnDevice">Change Device</button>
+    </div>
+    <p class="fine" id="mainStats"></p>
+  </div>
+</div>
+
+<div id="sMissions" class="screen">
+  <div class="panel glass wide">
+    <h2>Campaign</h2>
+    <div id="missionList" class="mlist"></div>
+    <button class="btn ghost" id="missionsBack">&larr; Back</button>
+  </div>
+</div>
+
+<div id="sSettings" class="screen">
+  <div class="panel glass">
+    <h2>Settings</h2>
+    <div class="set"><label>Sound</label><button class="btn small" id="setSound">ON</button></div>
+    <div class="set"><label>Volume</label><input type="range" id="setVol" min="0" max="1" step="0.05"></div>
+    <div class="set"><label>Graphics</label>
+      <select id="setQuality"><option value="low">Low (fast)</option><option value="medium">Medium</option><option value="high">High</option></select></div>
+    <div class="set"><label>Aim Sensitivity</label><input type="range" id="setSens" min="0.4" max="2.2" step="0.05"></div>
+    <div class="set"><label>Blaster Color</label>
+      <div class="swatches" id="swatches"></div>
+      <input type="color" id="setColor"></div>
+    <div class="set"><label>Fullscreen</label><button class="btn small" id="setFs">Toggle</button></div>
+    <button class="btn" id="settingsBack">&larr; Back</button>
+  </div>
+</div>
+
+<div id="sControls" class="screen">
+  <div class="panel glass wide">
+    <h2>Controls</h2>
+    <div class="ctl">
+      <div><h3>&#128187; Laptop</h3>
+        <p><b>W A S D</b> Move</p><p><b>Mouse</b> Aim</p><p><b>Left Click</b> Shoot (hold to auto-fire)</p>
+        <p><b>Shift</b> Sprint</p><p><b>R</b> Reload</p><p><b>Esc</b> Pause</p></div>
+      <div><h3>&#128241; Phone</h3>
+        <p><b>Left joystick</b> Move (push fully to sprint)</p><p><b>Drag screen</b> Aim</p><p><b>FIRE</b> Shoot</p>
+        <p><b>&#10227;</b> Reload</p><p><b>&#10074;&#10074;</b> Pause</p></div>
+    </div>
+    <p class="fine">Headshots (the glowing head/core) score more. Chain hits without missing to build a combo multiplier.</p>
+    <button class="btn" id="controlsBack">&larr; Back</button>
+  </div>
+</div>
+
+<div id="sPause" class="screen">
+  <div class="panel glass">
+    <h2>Paused</h2>
+    <div class="col">
+      <button class="btn" id="pResume">&#9654; Resume</button>
+      <button class="btn" id="pRestart">&#8635; Restart Mission</button>
+      <button class="btn" id="pSettings">&#9881; Settings</button>
+      <button class="btn ghost" id="pMenu">Main Menu</button>
+    </div>
+  </div>
+</div>
+
+<div id="sEnd" class="screen">
+  <div class="panel glass">
+    <h2 id="eTitle">Mission Complete</h2>
+    <p class="sub" id="eSub"></p>
+    <div id="eStats" class="stats"></div>
+    <div class="col">
+      <button class="btn" id="eNext">Next Mission &rarr;</button>
+      <button class="btn" id="eRetry">&#8635; Retry Mission</button>
+      <button class="btn ghost" id="eMenu">Main Menu</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
